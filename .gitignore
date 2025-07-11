@@ -24,4 +24,11 @@ tmp*
 tst*
 bak*
 
+#martinodb changes
+/download/nlpsolver-data/**
+gk_name_number.txt
+gk_relatedwords.txt
+gk_similarity.txt
+gk_taxonomy_packed.txt
+
 
