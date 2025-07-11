@@ -32,6 +32,11 @@ import os
 from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
 from urllib.parse import unquote
 
+#martinodb imports
+import nlpglobals
+#
+
+
 try: 
   import stanza # the only non-standard library dependency
 except:
@@ -47,11 +52,21 @@ python -c 'import stanza; stanza.download("en")'""")
 
 # ======= configuration globals ======
 
-host_name="localhost"
-server_port=8080
-gk_path="./gk"
+# host_name="localhost"
+# server_port=8080
+# gk_path="./gk"
+# logfile="/dev/null" # here server logs the requests
+# axiomfiles=None # "wnet_10k.js cnet_50k.js quasi_50k.js" # set to None to read no axioms
+
+#martinodb
+host_name=nlpglobals.server_name
+server_port=nlpglobals.server_port
+gk_path=nlpglobals.prover_fname
 logfile="/dev/null" # here server logs the requests
 axiomfiles=None # "wnet_10k.js cnet_50k.js quasi_50k.js" # set to None to read no axioms
+#
+
+
 
 # ====== globals used during work ========
 
