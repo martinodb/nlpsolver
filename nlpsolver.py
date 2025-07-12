@@ -30,6 +30,9 @@
 # ==== standard libraries ====
 
 import sys
+import http.client
+import urllib.parse
+import json
 
 # ==== import other source files ====
 
@@ -96,14 +99,71 @@ controlling the prover:
  -printlevel N : use N>10 to see more of the search process of the prover (10 is default, try 12)
 """
 
+def server_answer_question(text, newoptions=None):
+  """Call the nlpserver to solve a question."""
+  debug_print("server_answer_question text", text)
+  if newoptions: 
+    set_global_options(newoptions)
+    
+  conn = http.client.HTTPConnection(nlpglobals.server_name, nlpglobals.server_port, timeout=nlpglobals.server_timeout)
+  encoded = urllib.parse.quote(text)
+  
+  # Use a special prefix that won't be normalized by the HTTP client
+  # Using '_s_' instead of '//s/' to avoid URL normalization issues
+  request_path = "/_s_/" + encoded
+  debug_print("Making request with path:", request_path)
+  
+  # Send request with the special prefix
+  try:
+    conn.request("GET", request_path)
+  except KeyboardInterrupt:
+    raise
+  except Exception as e:
+    show_error("could not connect to the nlpserver " + nlpglobals.server_name + ":" + str(nlpglobals.server_port) +
+      ".\nStart the nlpserver.py or check the configured server name and port in nlpglobals.py. Error: " + str(e))  
+    sys.exit(0)
+    
+  try:  
+    resp = conn.getresponse()   
+  except KeyboardInterrupt:
+    raise   
+  except Exception as e:
+    show_error("did not get a usable response from nlpserver. Error: " + str(e))     
+    sys.exit(0)  
+    
+  if resp.status != 200:
+    show_error("unexpected response status from nlpserver:" +
+      str(resp.status) + " reason " + str(resp.reason))
+      
+  # Parse the JSON response
+  rawdata = resp.read()  
+  debug_print("Raw server response", rawdata)
+  
+  try:
+    data = json.loads(rawdata)
+    if "answer" in data:
+      return data["answer"]
+    elif "error" in data:
+      show_error(f"Server error: {data['error']} - {data.get('details', 'No details provided')}")
+      sys.exit(0)
+    else:
+      show_error("nlpserver response doesn't contain 'answer' field: " + str(rawdata))
+      sys.exit(0)
+  except KeyboardInterrupt:
+    raise  
+  except Exception as e:
+    show_error("nlpserver response is not a correct json: " + str(rawdata) + "\nError: " + str(e))
+    sys.exit(0)
+
 def main():    
   # - - - parse cmd line - - -
-  text,newoptions=parse_cmd_line(helptext) 
+  text, newoptions = parse_cmd_line(helptext) 
   if not text:
-    show_error("No text given: \n"+helptext)
-    sys.exit(0)  
-  result=answer_question(text,newoptions)
-  #debug_print("Answer:")
+    show_error("No text given: \n" + helptext)
+    sys.exit(0)
+    
+  # Use the server version when running as main
+  result = server_answer_question(text, newoptions)
   print(result)
 
 # ====== answer_question carries out the whole process ======
@@ -386,11 +446,4 @@ def prepare_text(text):
 # =========== main caller ==========
 
 if __name__ == "__main__":        
-  main()  
-
-
-
-
-
-
-
+  main()

@@ -34,6 +34,8 @@ from urllib.parse import unquote
 
 #martinodb imports
 import nlpglobals
+# Import nlpsolver for the solve_text function
+import nlpsolver
 #
 
 
@@ -79,17 +81,26 @@ import time
 
 class MyServer(BaseHTTPRequestHandler):
   def do_GET(self):
-    #global count
-    text=unquote(self.path) # urldecode 
-    #print("count start",count)
-    if text: text=text[1:]  # remove initial slash
-    result=parse_text(text) # call stanza parser
-    #print("count end",count)
-    #for i in range(0,10):
-    #  print("i",i)
-    #  time.sleep(1)
-    #print("count end",count)
-    #count+=1
+    text = unquote(self.path)  # urldecode
+    
+    # Debug the exact path received
+    print(f"Received path: '{text}'")
+    
+    # Check if this is a solve request with the new prefix
+    if text.startswith("/_s_/"):
+      print("Detected solve request")
+      text = text[5:]  # Remove the /_s_/ prefix (5 characters)
+      print(f"Processing text for solving: '{text}'")
+      
+      result = solve_text(text)
+    else:
+      # Regular parse request
+      print(f"Detected parse request: '{text}'")
+      if text:
+        text = text[1:]  # remove initial slash
+      print(f"Processing text for parsing: '{text}'")
+      result = parse_text(text)  # call stanza parser
+    
     self.send_response(200)
     self.send_header("Content-type", "text/json")
     self.end_headers()    
@@ -110,6 +121,16 @@ def parse_text(text):
   #print("end parse_text count",count)
   #count+=1
   return resjson
+
+def solve_text(text):
+  """Call the answer_question function from nlpsolver to solve a question."""
+  try:
+    # Call the answer_question function from nlpsolver
+    answer = nlpsolver.answer_question(text)
+    # Return the answer as JSON
+    return json.dumps({"answer": answer})
+  except Exception as e:
+    return json.dumps({"error": "Error processing request", "details": str(e)})
 
 # ====== starting ======
 
