@@ -89,10 +89,32 @@ class MyServer(BaseHTTPRequestHandler):
     # Check if this is a solve request with the new prefix
     if text.startswith("/_s_/"):
       print("Detected solve request")
-      text = text[5:]  # Remove the /_s_/ prefix (5 characters)
-      print(f"Processing text for solving: '{text}'")
       
-      result = solve_text(text)
+      # Remove prefix
+      text = text[5:]  
+      
+      # Extract options and text
+      parts = text.split('/', 1)  # Split only on first slash
+      
+      if len(parts) == 2:
+        options_str, query_text = parts
+        
+        # Parse options
+        if options_str.lower() != "null":
+          try:
+            options = json.loads(options_str)
+          except:
+            options = None
+        else:
+            options = None
+            
+        print(f"Processing text for solving with options: '{options}'")
+        result = solve_text(query_text, options)
+      else:
+        # Backward compatibility - no options provided
+        print(f"Processing text for solving (no options): '{text}'")
+        result = solve_text(text)
+        
     else:
       # Regular parse request
       print(f"Detected parse request: '{text}'")
@@ -122,11 +144,11 @@ def parse_text(text):
   #count+=1
   return resjson
 
-def solve_text(text):
+def solve_text(text, options=None):
   """Call the answer_question function from nlpsolver to solve a question."""
   try:
-    # Call the answer_question function from nlpsolver
-    answer = nlpsolver.answer_question(text)
+    # Call the answer_question function from nlpsolver with options
+    answer = nlpsolver.answer_question(text, options)
     # Return the answer as JSON
     return json.dumps({"answer": answer})
   except Exception as e:

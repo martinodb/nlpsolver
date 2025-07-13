@@ -100,17 +100,23 @@ controlling the prover:
 """
 
 def server_answer_question(text, newoptions=None):
-  """Call the nlpserver to solve a question."""
+  """Call the nlpserver to solve a question with options."""
   debug_print("server_answer_question text", text)
   if newoptions: 
     set_global_options(newoptions)
     
   conn = http.client.HTTPConnection(nlpglobals.server_name, nlpglobals.server_port, timeout=nlpglobals.server_timeout)
-  encoded = urllib.parse.quote(text)
   
-  # Use a special prefix that won't be normalized by the HTTP client
-  # Using '_s_' instead of '//s/' to avoid URL normalization issues
-  request_path = "/_s_/" + encoded
+  # Encode text
+  encoded_text = urllib.parse.quote(text)
+  
+  # Encode options as JSON if they exist
+  if newoptions:
+    encoded_options = urllib.parse.quote(json.dumps(newoptions))
+    request_path = f"/_s_/{encoded_options}/{encoded_text}"
+  else:
+    request_path = f"/_s_/null/{encoded_text}"
+    
   debug_print("Making request with path:", request_path)
   
   # Send request with the special prefix
