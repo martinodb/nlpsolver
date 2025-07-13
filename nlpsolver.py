@@ -102,8 +102,8 @@ controlling the prover:
 def server_answer_question(text, newoptions=None):
   """Call the nlpserver to solve a question with options."""
   debug_print("server_answer_question text", text)
-  if newoptions: 
-    set_global_options(newoptions)
+  # if newoptions: # This is now done in the answer_question function
+  #   set_global_options(newoptions)
     
   conn = http.client.HTTPConnection(nlpglobals.server_name, nlpglobals.server_port, timeout=nlpglobals.server_timeout)
   
