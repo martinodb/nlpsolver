@@ -41,11 +41,13 @@ from nlpcache import *
 # === calling the prover ===
  
 def call_prover(logic):   
-  #debug_print("solve logic",logic)
+  
+  debug_print("solve logic",logic)
   #js=json.dumps(question,indent=2)
   #print("js:",js)  
   #pp = pprint.pformat(logic,width=80,indent=2,sort_dicts=False)   
   #instr=pp.replace("'","\"")
+
   instr=clause_list_to_json(logic)
   #debug_print("ppnice",ppnice)
   if (options["prover_print_flag"] or options["show_prover_flag"]) and not options["prover_nosolve_flag"]:

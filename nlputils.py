@@ -652,10 +652,16 @@ def variable_shaped_lemma(lemma):
   if type(lemma)!=str: return False
   if len(lemma)==0: return False
   if (lemma[0] in ["x","y","z","X","Y","Z"]):
-    if len(lemma)==1: return True
-    if lemma[1:].isnumeric(): return True
+    if len(lemma)==1:
+      debug_print("Detected variable shaped lemma:", lemma)
+      return True
+    if lemma[1:].isnumeric():
+      debug_print("Detected variable shaped lemma:", lemma)
+      return True
     if len(lemma)<3: return False
-    if lemma[1]=="_" and lemma[2:].isnumeric(): return True
+    if lemma[1]=="_" and lemma[2:].isnumeric():
+      debug_print("Detected variable shaped lemma:", lemma)
+      return True
   return False  
 
 

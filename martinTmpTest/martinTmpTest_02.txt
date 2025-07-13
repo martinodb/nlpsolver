@@ -1,0 +1,25 @@
+[
+{"@logic": ["or",
+    ["-rel2_of","friend","?:X","?:Y",["$ctxt","Pres","?:Ignore3"]],
+    ["do2","cherish","?:X","?:Y",["cs1","?:Y","?:X"],["$ctxt","Pres","?:Ignore4"]],
+    ["$block",["$","$generic",2],["$not",["do2","cherish","?:X","?:Y",["cs1","?:Y","?:X"],["$ctxt","Pres","?:Ignore4"]]]]],
+ "@name": "sent_1"},
+{"@logic": ["or", ["isa","person","c2_Mary"], ["$block",0,["$not",["isa","person","c2_Mary"]]]],
+ "@name": "sent_2"},
+{"@logic": ["isa","object","c2_Mary"],
+ "@name": "sent_2"},
+{"@logic": ["or", ["isa","person","c3_Dummyname_1"], ["$block",0,["$not",["isa","person","c3_Dummyname_1"]]]],
+ "@name": "sent_2",
+ "@confidence": 0.9},
+{"@logic": ["isa","object","c3_Dummyname_1"],
+ "@name": "sent_2"},
+{"@logic": ["or", ["-$def6","?:Q1"], ["do2","cherish","?:Q1","c2_Mary",["cs4","?:Q1"],["$ctxt","Pres","?:Fv6"]]],
+ "@name": "sent_2",
+ "@sourcetype": "question"},
+{"@logic": ["or", ["$def6","?:Q1"], ["-do2","cherish","?:Q1","c2_Mary","?:A5",["$ctxt","Pres","?:Fv6"]]],
+ "@name": "sent_2",
+ "@sourcetype": "question"},
+{"@question": ["$def6","?:Q1"],
+ "@name": "sent_2"}
+]
+
