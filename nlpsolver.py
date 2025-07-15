@@ -197,7 +197,7 @@ def answer_question(text,newoptions=None):
   data = server_parse(text)
   doc=data["doc"]  
   entities=data["entities"] 
-  debug_print("doc tree:")
+  debug_print("doc tree:\n")
   debug_print_sentence_trees(doc)     
   debug_print("entities",entities)  
   # - - - convert to logic and solve - - - 

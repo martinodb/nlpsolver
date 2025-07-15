@@ -134,7 +134,17 @@ def parse_text(text):
   #global count
   #print("start parse_text count",count)
   doc=nlp(text)
+  #
+  print("doc=nlp(text):\n", doc)
+  try:
+    print("Number of elements in doc:", len(doc.sentences))
+  except Exception as e:
+    print(f"Error when getting number of elements in doc: {e}")
+  #
   docpy = doc.to_dict()
+  #
+  print("docpy:\n", docpy)
+  #
   entities=[]
   for el in doc.entities:
     entities.append(el.to_dict())
