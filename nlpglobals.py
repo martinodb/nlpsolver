@@ -147,7 +147,7 @@ def set_globals(g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,g11):
   forward_flag=g9
   backward_flag=g10
   nocontext_flag=g11
-  noexceptions_flag=g12
+  # noexceptions_flag=g12
   #options.noproptypes_flag=g12
 
 def set_global_options(newoptions):
