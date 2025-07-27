@@ -78,9 +78,94 @@ axiomfiles="wnet_10k_mod_martinodb_v01.js cnet_50k.js quasi_50k.js"
 
 
 
+# ====== command line parsing ======
+
+def parse_cmd_line():
+  debug_flag = False
+  cmd_axiomfiles = None
+  cmd_host_name = None
+  cmd_server_port = None
+  
+  if len(sys.argv) < 2:
+    return {"debug_flag": debug_flag, "cmd_axiomfiles": cmd_axiomfiles, "cmd_host_name": cmd_host_name, "cmd_server_port": cmd_server_port}
+    
+  params = sys.argv[1:]
+  elpos = -1
+  skippos = 0
+  
+  for el in params:
+    elpos += 1
+    if skippos > 0:
+      skippos = skippos - 1
+      continue
+      
+    if el in ["-debug", "--debug"]:
+      debug_flag = True
+    elif el in ["-axioms", "--axioms"]:
+      axiom_files_list = []
+      fpos = 1
+      while elpos + fpos < len(params):
+        if not params[elpos + fpos] or params[elpos + fpos].startswith("-"):
+          break
+        axiom_files_list.append(params[elpos + fpos])
+        fpos += 1
+      skippos = fpos - 1
+      # Join the axiom files into a space-separated string as expected by the code
+      cmd_axiomfiles = " ".join(axiom_files_list)
+    elif el in ["-host_name", "--host_name"]:
+      if elpos + 1 >= len(params):
+        print("-host_name takes a hostname parameter")
+        sys.exit(1)
+      cmd_host_name = params[elpos + 1]
+      skippos = 1
+    elif el in ["-server_port", "--server_port"]:
+      if elpos + 1 >= len(params):
+        print("-server_port takes a port number parameter")
+        sys.exit(1)
+      try:
+        cmd_server_port = int(params[elpos + 1])
+      except ValueError:
+        print("-server_port takes an integer port number parameter")
+        sys.exit(1)
+      if cmd_server_port < 1 or cmd_server_port > 65535:
+        print("-server_port takes a valid port number (1-65535)")
+        sys.exit(1)
+      skippos = 1
+    elif el in ["help", "-help", "--help"]:
+      print_help()
+      sys.exit(0)
+    elif el and el[0] == "-":
+      print(f"Error: Option {el} is not recognized.")
+      print_help()
+      sys.exit(1)
+      
+  return {"debug_flag": debug_flag, "cmd_axiomfiles": cmd_axiomfiles, "cmd_host_name": cmd_host_name, "cmd_server_port": cmd_server_port}
+
+def print_help():
+  helptext = """
+nlpserver.py - NLP Server for nlpsolver
+
+Usage: nlpserver.py [options]
+
+Options:
+  -axioms, --axioms <file1> <file2> ...   Specify axiom files to load
+  -debug, --debug                         Enable debug mode
+  -host_name, --host_name <hostname>      Specify server hostname (default: from nlpglobals)
+  -server_port, --server_port <port>      Specify server port (default: from nlpglobals)
+  -help, --help                           Show this help message
+
+Examples:
+  nlpserver.py -axioms wnet_10k.js cnet_50k.js quasi_50k.js
+  nlpserver.py -debug -axioms wnet_10k.js
+  nlpserver.py -host_name 0.0.0.0 -server_port 8080
+"""
+  print(helptext)
+
+
 # ====== globals used during work ========
 
 nlp=None # at startup nlp is assigned the stanza pipeline
+debug_mode=False # global debug flag
 
 count=0
 import time
@@ -89,14 +174,17 @@ import time
 
 class MyServer(BaseHTTPRequestHandler):
   def do_GET(self):
+    global debug_mode
     text = unquote(self.path)  # urldecode
     
     # Debug the exact path received
-    print(f"Received path: '{text}'")
+    if debug_mode:
+      print(f"Received path: '{text}'")
     
     # Check if this is a solve request with the new prefix
     if text.startswith("/_s_/"):
-      print("Detected solve request")
+      if debug_mode:
+        print("Detected solve request")
       
       # Remove prefix
       text = text[5:]  
@@ -116,19 +204,23 @@ class MyServer(BaseHTTPRequestHandler):
         else:
             options = None
             
-        print(f"Processing text for solving with options: '{options}'")
+        if debug_mode:
+          print(f"Processing text for solving with options: '{options}'")
         result = solve_text(query_text, options)
       else:
         # Backward compatibility - no options provided
-        print(f"Processing text for solving (no options): '{text}'")
+        if debug_mode:
+          print(f"Processing text for solving (no options): '{text}'")
         result = solve_text(text)
         
     else:
       # Regular parse request
-      print(f"Detected parse request: '{text}'")
+      if debug_mode:
+        print(f"Detected parse request: '{text}'")
       if text:
         text = text[1:]  # remove initial slash
-      print(f"Processing text for parsing: '{text}'")
+      if debug_mode:
+        print(f"Processing text for parsing: '{text}'")
       result = parse_text(text)  # call stanza parser
     
     self.send_response(200)
@@ -138,20 +230,22 @@ class MyServer(BaseHTTPRequestHandler):
 
 
 def parse_text(text):
-  global nlp
+  global nlp, debug_mode
   #global count
   #print("start parse_text count",count)
   doc=nlp(text)
   #
-  print("doc=nlp(text):\n", doc)
-  try:
-    print("Number of elements in doc:", len(doc.sentences))
-  except Exception as e:
-    print(f"Error when getting number of elements in doc: {e}")
+  if debug_mode:
+    print("doc=nlp(text):\n", doc)
+    try:
+      print("Number of elements in doc:", len(doc.sentences))
+    except Exception as e:
+      print(f"Error when getting number of elements in doc: {e}")
   #
   docpy = doc.to_dict()
   #
-  print("docpy:\n", docpy)
+  if debug_mode:
+    print("docpy:\n", docpy)
   #
   entities=[]
   for el in doc.entities:
@@ -175,6 +269,27 @@ def solve_text(text, options=None):
 # ====== starting ======
 
 if __name__ == "__main__":   
+  # Parse command-line arguments
+  cmd_options = parse_cmd_line()
+  debug_flag = cmd_options["debug_flag"]
+  debug_mode = debug_flag  # Set global debug flag
+  
+  # Override axiomfiles if provided via command line
+  if cmd_options["cmd_axiomfiles"] is not None:
+    axiomfiles = cmd_options["cmd_axiomfiles"]
+  
+  # Override host_name if provided via command line
+  if cmd_options["cmd_host_name"] is not None:
+    host_name = cmd_options["cmd_host_name"]
+  
+  # Override server_port if provided via command line
+  if cmd_options["cmd_server_port"] is not None:
+    server_port = cmd_options["cmd_server_port"]
+  
+  if debug_flag:
+    print(f"Debug mode enabled. Using axiomfiles: {axiomfiles}")
+    print(f"Server will start on {host_name}:{server_port}")
+  
   print("Starting to build the stanza pipeline.")     
   # no download_method for stanza 1.3
   # nlp = stanza.Pipeline(lang='en', processors='tokenize,ner,pos,lemma,depparse', download_method=stanza.DownloadMethod.REUSE_RESOURCES)
