@@ -65,8 +65,16 @@ host_name=nlpglobals.server_name
 server_port=nlpglobals.server_port
 gk_path=nlpglobals.prover_fname
 logfile="/dev/null" # here server logs the requests
-axiomfiles=None # "wnet_10k.js cnet_50k.js quasi_50k.js" # set to None to read no axioms
-#
+
+# axiomfiles=None # "wnet_10k.js cnet_50k.js quasi_50k.js" # set to None to read no axioms
+
+#axiomfiles="wnet_10k.js cnet_50k.js quasi_50k.js"
+# axiomfiles="wnet_10k.js cnet_50k.js quasi_50k.js martinodb_appendto_wnet.json"
+axiomfiles="wnet_10k_mod_martinodb_v01.js cnet_50k.js quasi_50k.js"
+
+# axiomfiles="wnet_10k.js"
+# axiomfiles="cnet_50k.js"
+# axiomfiles="quasi_50k.js"
 
 
 
