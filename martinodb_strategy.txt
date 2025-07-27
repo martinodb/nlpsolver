@@ -1,0 +1,4 @@
+    {
+    "strategy":["query_focus"],
+    "max_answers": 3
+    }

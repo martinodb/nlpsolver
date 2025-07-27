@@ -1,0 +1,21 @@
+[
+{"@logic": ["isa","placental","c1_John"],
+ "@name": "sent_1"},
+{"@logic": ["isa","placental","c2_Mike"],
+ "@name": "sent_1"},
+{"@logic": ["or", ["isa","person","c1_John"], ["$block",0,["$not",["isa","person","c1_John"]]]],
+ "@name": "sent_1"},
+{"@logic": ["isa","object","c1_John"],
+ "@name": "sent_1"},
+{"@logic": ["or", ["isa","person","c2_Mike"], ["$block",0,["$not",["isa","person","c2_Mike"]]]],
+ "@name": "sent_1"},
+{"@logic": ["isa","object","c2_Mike"],
+ "@name": "sent_1"},
+{"@logic": ["or", ["isa","person","c3_Dummyname_1"], ["$block",0,["$not",["isa","person","c3_Dummyname_1"]]]],
+ "@name": "sent_2",
+ "@confidence": 0.9},
+{"@logic": ["isa","object","c3_Dummyname_1"],
+ "@name": "sent_2"},
+{"@question": ["isa","mammal","?:Q1"],
+ "@name": "sent_2"}
+]

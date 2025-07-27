@@ -1,0 +1,19 @@
+[
+
+{"@logic": [["isa", "mammal", "?:X"], "=>", ["isa", "vertebrate", "?:X"]], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": ["sclass", "vertebrate", "mammal"], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": [["isa", "tusker", "?:X"], "=>", ["isa", "mammal", "?:X"]], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": ["sclass", "mammal", "tusker"], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": [["isa", "platypus", "?:X"], "=>", ["isa", "mammal", "?:X"]], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": ["sclass", "mammal", "platypus"], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": [["isa", "marsupial", "?:X"], "=>", ["isa", "mammal", "?:X"]], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": ["sclass", "mammal", "marsupial"], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": [["isa", "placental", "?:X"], "=>", ["isa", "mammal", "?:X"]], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": ["sclass", "mammal", "placental"], "@name": "wordnet taxonomy", "@role": "extaxiom"},
+{"@logic": ["isa", "mammal", "some_mammal"], "@name": "wordnet word", "@role": "extaxiom"},
+
+
+
+{"@logic": ["isa", "placental", "John2"], "@name": "wordnet instance", "@role": "extaxiom"},
+{"@logic": ["isa", "placental", "Lucy2"], "@name": "wordnet instance", "@role": "extaxiom"}
+]

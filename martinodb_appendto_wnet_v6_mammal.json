@@ -1,0 +1,6 @@
+[
+    {"@logic": [["isa", "placental", "?:X"], "=>", ["isa", "mammal", "?:X"]], "@name": "wordnet taxonomy"},
+    {"@logic": ["isa", "placental", "Lucy2"], "@name": "wordnet instance"},
+    {"@logic": ["isa", "placental", "John2"], "@name": "wordnet instance"}
+]
+
