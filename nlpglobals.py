@@ -57,7 +57,10 @@ secrets_file="secrets.js" # only needed for reading llm keys, if llm used
 
 # connecting to nlpserver.py
 server_name="localhost"
-server_port=8080
+
+# server_port=8080 # upstream default. Works on Linux native, but not on WSL Windows.
+server_port=49152 # default for WSL Windows, where the 8080 port seems to be busy.
+
 server_timeout=2
 
 # cache
