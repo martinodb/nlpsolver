@@ -166,9 +166,8 @@ def main():
   if not text:
     show_error("No text given: \n" + helptext)
     sys.exit(0)
-    
-  # Use the server version when running as main
-  result = server_answer_question(text, newoptions)
+  result = answer_question(text, newoptions)
+  #debug_print("Answer:")
   print(result)
 
 # ====== answer_question carries out the whole process ======
